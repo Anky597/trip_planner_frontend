@@ -1,13 +1,14 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAppStore } from "@/store/app-store";
 import { getUserInfo, createGroup as apiCreateGroup, addMember } from "@/lib/api-client";
 import { GroupInfo } from "@/lib/api-client";
 
 export default function WelcomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     currentUser,
     groups,
@@ -41,11 +42,20 @@ export default function WelcomePage() {
   const [creatingDestination, setCreatingDestination] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [loading, setLoading] = useState<null | "create" | "join">(null);
+  const [justCreated, setJustCreated] = useState(false);
   const [userGroups, setUserGroups] = useState<GroupInfo[]>([]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Show banner if we arrive with ?created=1
+  useEffect(() => {
+    if (searchParams?.get("created") === "1") {
+      setJustCreated(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -118,7 +128,8 @@ export default function WelcomePage() {
       const info = await getUserInfo(currentUser.email);
       setUserGroups(info.groups);
       setLoading(null);
-      router.push(`/app?group=${info.groups[info.groups.length - 1].id}`);
+      // Ensure banner is shown reliably by updating the URL with a flag
+      router.replace("/welcome?created=1");
     } catch (error) {
       console.error("Failed to create group:", error);
       setLoading(null);
@@ -151,6 +162,32 @@ export default function WelcomePage() {
       </form>
 
       <section className="fixed inset-0 bg-zinc-950 text-zinc-50 text-[15px]">
+      {/* Soft banner: prompt refresh after group creation */}
+      {justCreated && (
+        <div className="absolute top-0 inset-x-0 z-50">
+          <div className="mx-auto max-w-screen-lg px-4 pt-3">
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-2">
+              <span className="text-[12px] text-emerald-300">
+                Group created successfully. Refresh the page to see it in your list.
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-3 py-1.5 rounded-md bg-emerald-400/20 border border-emerald-400/60 text-emerald-200 text-[11px] hover:bg-emerald-400/30 transition"
+                >
+                  Refresh now
+                </button>
+                <button
+                  onClick={() => setJustCreated(false)}
+                  className="px-2 py-1.5 rounded-md bg-zinc-900/70 border border-zinc-700/70 text-zinc-300 text-[11px] hover:text-zinc-100 transition"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Shared accent styling with auth/survey */}
       <style>{`
         .welcome-shell-animate {opacity:0;transform:translateY(18px);animation:fadeWelcomeUp .7s cubic-bezier(.22,.61,.36,1) .18s forwards;}
