@@ -1,12 +1,21 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppStore } from "@/store/app-store";
 import { getUserInfo, createGroup as apiCreateGroup, addMember } from "@/lib/api-client";
 import { GroupInfo } from "@/lib/api-client";
 
+// Wrapper to satisfy Next.js requirement: useSearchParams must be inside a Suspense boundary
 export default function WelcomePage() {
+  return (
+    <Suspense fallback={null}>
+      <WelcomePageInner />
+    </Suspense>
+  );
+}
+
+function WelcomePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {
@@ -238,7 +247,7 @@ export default function WelcomePage() {
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="text-[12px] font-semibold text-zinc-50">
-                  NovaTrip OS
+                  GroupQuest
                 </span>
                 <span className="text-[10px] text-zinc-500">
                   Shared trip console

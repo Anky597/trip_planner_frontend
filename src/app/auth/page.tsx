@@ -317,7 +317,7 @@ function LoginCardSection(props: {
       {/* Header */}
       <header className="absolute inset-x-0 top-0 flex items-center justify-between px-6 py-4 border-b border-zinc-800/80">
         <span className="text-[10px] tracking-[0.16em] uppercase text-zinc-400">
-          NOVA TRIP WORKSPACE
+          GROUPQUEST AI WORKSPACE
         </span>
         <Button
           variant="outline"

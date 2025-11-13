@@ -39,24 +39,44 @@ async function forward(
   });
 }
 
-export async function GET(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(req, "GET", params.path || []);
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const { path } = await context.params;
+  return forward(req, "GET", path || []);
 }
 
-export async function POST(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(req, "POST", params.path || []);
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const { path } = await context.params;
+  return forward(req, "POST", path || []);
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(req, "PUT", params.path || []);
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const { path } = await context.params;
+  return forward(req, "PUT", path || []);
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(req, "PATCH", params.path || []);
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const { path } = await context.params;
+  return forward(req, "PATCH", path || []);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(req, "DELETE", params.path || []);
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ path: string[] }> }
+) {
+  const { path } = await context.params;
+  return forward(req, "DELETE", path || []);
 }
 
 
