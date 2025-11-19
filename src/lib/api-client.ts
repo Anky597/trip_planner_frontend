@@ -171,6 +171,7 @@ export interface GroupTraitsResponse {
   group_members: {
     persona_traits: Record<string, any>;
     ai_summary: string;
+    email?: string;
   }[];
 }
 
